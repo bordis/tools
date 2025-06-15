@@ -12,7 +12,7 @@ import br.com.bordi.tools.tools.BitcoinTool;
 @Service
 public class BitcoinService {
 
-    private static final Logger log = LoggerFactory.getLogger(BitcoinTool.class);
+    private static final Logger log = LoggerFactory.getLogger(BitcoinService.class);
 
     private final ChatClient chatClient;
     private final BitcoinTool bitcoinTool;

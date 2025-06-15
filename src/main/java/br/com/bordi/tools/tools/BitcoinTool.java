@@ -32,15 +32,15 @@ public class BitcoinTool {
                 }).build();
 
         try {
-            log.info("Fetching Bitcoin price from API: {}", apiNinjaUrl);
+            log.info("TOOL: Fetching Bitcoin price from API: {}", apiNinjaUrl);
             ResponseEntity<BitcoinResponseRecord> response = restClient.get()
                     .uri(apiNinjaUrl)
                     .retrieve()
                     .toEntity(BitcoinResponseRecord.class);
-            log.info("Received response: {}", response.getBody());
+            log.info("TOOL: Received response: {}", response.getBody());
             return response.getBody();
         } catch (Exception e) {
-            log.error("Error fetching Bitcoin price: {}", e.getMessage(), e);
+            log.error("TOOL: Error fetching Bitcoin price: {}", e.getMessage(), e);
             throw new RuntimeException("Failed to fetch Bitcoin price", e);
         }
     }
