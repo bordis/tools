@@ -18,6 +18,8 @@ import org.springframework.stereotype.Service;
 import br.com.bordi.tools.models.AwnserRecord;
 import br.com.bordi.tools.models.QuestionRecord;
 import br.com.bordi.tools.tools.BitcoinTool;
+import br.com.bordi.tools.tools.StockExchangeTool;
+import br.com.bordi.tools.tools.StockQuoteTool;
 
 @Service
 public class ChatService {
@@ -26,10 +28,18 @@ public class ChatService {
 
     private final ChatClient chatClient;
     private final BitcoinTool bitcoinTool;
-
-    public ChatService(ChatClient.Builder chatClientBuilder, BitcoinTool bitcoinTool) {
+    private final StockExchangeTool stockTool;
+    private final StockQuoteTool stockQuoteTool;
+    public ChatService(
+        ChatClient.Builder chatClientBuilder, 
+        BitcoinTool bitcoinTool, 
+        StockExchangeTool stockTool,
+        StockQuoteTool stockQuoteTool
+        ) {
         this.chatClient = chatClientBuilder.build();
         this.bitcoinTool = bitcoinTool;
+        this.stockTool = stockTool;
+        this.stockQuoteTool = stockQuoteTool;
     }
 
     @Value("classpath:/prompt.st")
@@ -47,7 +57,7 @@ public class ChatService {
         log.info("Prompt created: {}", prompt);
 
          ChatResponse chatReponse = chatClient.prompt(prompt)
-                .tools(bitcoinTool)
+                .tools(bitcoinTool, stockTool, stockQuoteTool)
                 .call()
                 .chatResponse();
 

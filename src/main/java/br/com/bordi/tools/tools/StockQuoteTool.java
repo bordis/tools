@@ -8,21 +8,23 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClient;
 
-import br.com.bordi.tools.models.BitcoinResponseRecord;
+import br.com.bordi.tools.models.StockExchangeRecordRequest;
+import br.com.bordi.tools.models.StockQuoteRecordRequest;
+import br.com.bordi.tools.models.StockQuoteRecordResponse;
 
 @Component
-public class BitcoinTool {
+public class StockQuoteTool {
 
     private static final Logger log = LoggerFactory.getLogger(BitcoinTool.class);
 
     @Value("${API_NINJA_KEY}")
     private String apiNinjaKey;
 
-    @Value("${API_NINJA_BITCOIN}")
+    @Value("${API_NINJA_STOCK_QUOTE}")
     private String apiNinjaUrl;
 
-    @Tool(description = "Returns the latest Bitcoin price in USD and 24-hour market data.")
-    public BitcoinResponseRecord getBitcoinPrice() {
+    @Tool(description = "Returns the current price information for any given stock ticker symbol.")
+    public StockQuoteRecordResponse getStockQuote(StockQuoteRecordRequest request) {
         RestClient restClient = RestClient.builder()
                 .baseUrl(apiNinjaUrl)
                 .defaultHeaders(httpHeaders -> {
@@ -32,17 +34,17 @@ public class BitcoinTool {
                 }).build();
 
         try {
-            log.info("TOOL: Fetching Bitcoin price from API: {}", apiNinjaUrl);
-            ResponseEntity<BitcoinResponseRecord> response = restClient.get()
-                    .uri(apiNinjaUrl)
+            log.info("TOOL: Fetching stock quote data from API: {}", apiNinjaUrl);
+            ResponseEntity<StockQuoteRecordResponse> response = restClient.get()
+                    .uri(uriBuilder -> uriBuilder.queryParam("ticker", request.ticker()).build())
                     .retrieve()
-                    .toEntity(BitcoinResponseRecord.class);
+                    .toEntity(StockQuoteRecordResponse.class);
             log.info("TOOL: Received response: {}", response.getBody());
             return response.getBody();
         } catch (Exception e) {
-            log.error("TOOL: Error fetching Bitcoin price: {}", e.getMessage(), e);
-            throw new RuntimeException("Failed to fetch Bitcoin price", e);
+            log.error("TOOL: Error fetching stock quote data: {}", e.getMessage(), e);
+            throw new RuntimeException("Failed to fetch stock quote data", e);
         }
     }
-
+    
 }
